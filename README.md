@@ -5,7 +5,7 @@ Install go-binfmt.
 
 To use go-binfmt first register it with binfmt.
 
-	$ sudo $GOCODE/bin/go-binfmt -register
+	$ sudo $GOPATH/bin/go-binfmt -register
 
 To run a go file give it executable permissions, and then run it.
 
