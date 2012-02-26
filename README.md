@@ -1,4 +1,9 @@
-To use go-binfmt first register it with binfmt
+Install go-binfmt.
+
+	$ go get github.com/str1ngs/go-binfmt
+
+
+To use go-binfmt first register it with binfmt.
 
 	$ sudo $GOCODE/bin/go-binfmt -register
 
