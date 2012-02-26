@@ -24,6 +24,7 @@ var (
 	// errors
 	ErrorOsNotSupported = errors.New("binfmt is only supported on linux")
 	ErrorPermissions    = errors.New("you need to be root to register or unregister with binfmt")
+	ErrorRegPath        = errors.New("in order to register go-binfmt you need to call it with its fullpath")
 )
 
 func init() {
@@ -66,9 +67,9 @@ func register() {
 		log.Fatal(ErrorPermissions)
 	}
 	unregister()
-	bin, err := filepath.Abs(os.Args[0])
-	if err != nil {
-		log.Fatal(err)
+	bin := os.Args[0]
+	if !filepath.IsAbs(bin) {
+		log.Fatal(ErrorRegPath)
 	}
 	binFmt := fmt.Sprintf(":%s:E::go::%s:", REG_NAME, bin)
 	fd, err := os.OpenFile(REG_FILE, os.O_WRONLY, 0)
@@ -80,7 +81,7 @@ func register() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Go registered with binfmt")
+	fmt.Printf("Go interpreter %s registered with binfmt\n", bin)
 }
 
 func unregister() {
@@ -100,5 +101,5 @@ func unregister() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Go unregistered with binfmt")
+	fmt.Println("Go interpreter unregistered with binfmt")
 }
