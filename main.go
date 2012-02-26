@@ -23,9 +23,9 @@ var (
 
 	// errors
 	ErrorOsNotSupported = errors.New("binfmt is only supported on linux")
-	ErrorPermissions    = errors.New("you need to be root to register or unregister with binfmt")
-	ErrorRegPath        = errors.New("in order to register go-binfmt you need to call it with its fullpath")
-	ErrorBinfmtSetup    = errors.New("you need to have binfmt support in your kernel and mounted to /proc/sys/fs/binfmt_misc")
+	ErrorPermissions    = errors.New("need to be root to register or unregister with binfmt")
+	ErrorRegPath        = errors.New("run go-binfmt with its absolute path in order to register")
+	ErrorBinfmtSetup    = errors.New("kernel needs binfmt support and mounted to /proc/sys/fs/binfmt_misc")
 )
 
 func init() {
