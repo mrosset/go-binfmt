@@ -56,6 +56,7 @@ func run() {
 	}
 	dir, file := filepath.Split(flag.Arg(0))
 	goRun := exec.Command("go", "run", file)
+	goRun.Args = append(goRun.Args, os.Args[2:]...)
 	goRun.Stdout = os.Stdout
 	goRun.Stderr = os.Stderr
 	goRun.Dir = dir
