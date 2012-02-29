@@ -3,7 +3,7 @@ package main
 import "errors"
 import "flag"
 import "fmt"
-import "github.com/str1ngs/unix"
+import "github.com/str1ngs/util"
 import "log"
 import "os"
 import "os/exec"
@@ -32,7 +32,7 @@ func init() {
 	if runtime.GOOS != "linux" {
 		log.Fatal(ErrorOsNotSupported)
 	}
-	if !unix.FileExists(REG_FILE) {
+	if !util.FileExists(REG_FILE) {
 		log.Fatal(ErrorBinfmtSetup)
 	}
 	log.SetFlags(log.Lshortfile)
@@ -89,7 +89,7 @@ func register() {
 }
 
 func unregister() {
-	if !unix.FileExists(REG_DONE) {
+	if !util.FileExists(REG_DONE) {
 		fmt.Println(".go extenstions are not registered with binfmt, skipping")
 		return
 	}
