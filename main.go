@@ -60,9 +60,7 @@ func run() {
 	goRun.Stderr = os.Stderr
 	goRun.Dir = dir
 	err := goRun.Run()
-	if err != nil {
-		log.Fatal(err)
-	}
+	util.CheckFatal(err)
 }
 
 func register() {
@@ -81,14 +79,10 @@ func register() {
 	}
 	binFmt := fmt.Sprintf(":%s:E::go::%s:", REG_NAME, bin)
 	fd, err := os.OpenFile(REG_FILE, os.O_WRONLY, 0)
-	if err != nil {
-		log.Fatal(err)
-	}
+	util.CheckFatal(err)
 	defer fd.Close()
 	_, err = fd.WriteString(binFmt)
-	if err != nil {
-		log.Fatal(err)
-	}
+	util.CheckFatal(err)
 	fmt.Printf("Go interpreter %s registered with binfmt\n", bin)
 }
 
@@ -101,13 +95,9 @@ func unregister() {
 		log.Fatal(ErrorPermissions)
 	}
 	fd, err := os.OpenFile(REG_DONE, os.O_WRONLY, 0)
-	if err != nil {
-		log.Fatal(err)
-	}
+	util.CheckFatal(err)
 	defer fd.Close()
 	_, err = fd.WriteString("-1")
-	if err != nil {
-		log.Fatal(err)
-	}
+	util.CheckFatal(err)
 	fmt.Println("Go interpreter unregistered with binfmt")
 }
