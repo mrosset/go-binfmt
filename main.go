@@ -9,11 +9,13 @@ import "os"
 import "os/exec"
 import "path/filepath"
 import "runtime"
+import "syscall"
 
 const (
-	REG_NAME = "GO"
-	REG_DONE = "/proc/sys/fs/binfmt_misc/GO"
-	REG_FILE = "/proc/sys/fs/binfmt_misc/register"
+	REG_NAME  = "GO"
+	REG_DONE  = "/proc/sys/fs/binfmt_misc/GO"
+	REG_FILE  = "/proc/sys/fs/binfmt_misc/register"
+	REG_MOUNT = "/proc/sys/fs/binfmt_misc"
 )
 
 var (
@@ -25,15 +27,12 @@ var (
 	ErrorOsNotSupported = errors.New("binfmt is only supported on linux")
 	ErrorPermissions    = errors.New("need to be root to register or unregister with binfmt")
 	ErrorRegPath        = errors.New("run go-binfmt with its absolute path in order to register")
-	ErrorBinfmtSetup    = errors.New("kernel needs binfmt support and mounted to /proc/sys/fs/binfmt_misc")
+	ErrorMount          = errors.New("kernel needs binfmt support to mount /proc/sys/fs/binfmt_misc")
 )
 
 func init() {
 	if runtime.GOOS != "linux" {
 		log.Fatal(ErrorOsNotSupported)
-	}
-	if !util.FileExists(REG_FILE) {
-		log.Fatal(ErrorBinfmtSetup)
 	}
 	log.SetFlags(log.Lshortfile)
 }
@@ -69,6 +68,11 @@ func run() {
 func register() {
 	if os.Geteuid() != 0 {
 		log.Fatal(ErrorPermissions)
+	}
+	if !util.FileExists(REG_FILE) {
+		fmt.Println("binfmt_misc not mounted. mounting...")
+		err := syscall.Mount("binfmt_misc", REG_MOUNT, "binfmt_misc", uintptr(0), "")
+		util.CheckFatal(err)
 	}
 	unregister()
 	bin := os.Args[0]
