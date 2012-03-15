@@ -4,6 +4,7 @@ import "errors"
 import "flag"
 import "fmt"
 import "github.com/str1ngs/util"
+import "github.com/str1ngs/util/file"
 import "log"
 import "os"
 import "os/exec"
@@ -68,7 +69,7 @@ func register() {
 	if os.Geteuid() != 0 {
 		log.Fatal(ErrorPermissions)
 	}
-	if !util.FileExists(REG_FILE) {
+	if !file.Exists(REG_FILE) {
 		fmt.Println("binfmt_misc not mounted. mounting...")
 		err := syscall.Mount("binfmt_misc", REG_MOUNT, "binfmt_misc", uintptr(0), "")
 		util.CheckFatal(err)
@@ -88,7 +89,7 @@ func register() {
 }
 
 func unregister() {
-	if !util.FileExists(REG_DONE) {
+	if !file.Exists(REG_DONE) {
 		fmt.Println(".go extenstions are not registered with binfmt, skipping")
 		return
 	}
