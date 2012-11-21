@@ -3,7 +3,6 @@ package main
 import "errors"
 import "flag"
 import "fmt"
-import "github.com/str1ngs/util"
 import "github.com/str1ngs/util/file"
 import "log"
 import "os"
@@ -62,7 +61,9 @@ func run() {
 	goRun.Stderr = os.Stderr
 	goRun.Dir = dir
 	err := goRun.Run()
-	util.CheckFatal(err)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func register() {
@@ -72,7 +73,9 @@ func register() {
 	if !file.Exists(REG_FILE) {
 		fmt.Println("binfmt_misc not mounted. mounting...")
 		err := syscall.Mount("binfmt_misc", REG_MOUNT, "binfmt_misc", uintptr(0), "")
-		util.CheckFatal(err)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 	unregister()
 	bin := os.Args[0]
@@ -81,10 +84,14 @@ func register() {
 	}
 	binFmt := fmt.Sprintf(":%s:E::go::%s:", REG_NAME, bin)
 	fd, err := os.OpenFile(REG_FILE, os.O_WRONLY, 0)
-	util.CheckFatal(err)
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer fd.Close()
 	_, err = fd.WriteString(binFmt)
-	util.CheckFatal(err)
+	if err != nil {
+		log.Fatal(err)
+	}
 	fmt.Printf("Go interpreter %s registered with binfmt\n", bin)
 }
 
@@ -97,9 +104,13 @@ func unregister() {
 		log.Fatal(ErrorPermissions)
 	}
 	fd, err := os.OpenFile(REG_DONE, os.O_WRONLY, 0)
-	util.CheckFatal(err)
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer fd.Close()
 	_, err = fd.WriteString("-1")
-	util.CheckFatal(err)
+	if err != nil {
+		log.Fatal(err)
+	}
 	fmt.Println("Go interpreter unregistered with binfmt")
 }
